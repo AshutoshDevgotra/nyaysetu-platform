@@ -1,11 +1,19 @@
 import React from 'react'
-import ExpertGrid from '../components/ExpertGrid'
-import ExpertCard from '../components/ExpertProfiles'
+
+import ExpertCard from '../components/ExpertCard'
 
 function page() {
   return (
     <div>
-        <ExpertCard name={''} image={''} barCouncilId={''} experience={0} casesFought={0} expertise={''} price={0} />
+      <ExpertCard
+      name={''}
+      image={''}
+      barCouncilId={''}
+      experience={0}
+      casesFought={0}
+      expertise={''}
+      price={0}
+      />
     </div>
   )
 }

@@ -15,7 +15,7 @@ export default function LawyerRegister() {
     expertise: '',
     price: '',
   });
-  const [imageFile, setImageFile] = useState<File | null>(null);
+ const [imageFile, setImageFile] = useState<File | null>(null);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
