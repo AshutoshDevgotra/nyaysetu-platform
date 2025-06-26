@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { signInWithGoogle } from "@/utils/authFunctions";
+import { signInWithGoogle } from "@/lib/utils/authFunctions";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub, FaApple } from "react-icons/fa";
 import { useRouter } from "next/navigation";

@@ -3,7 +3,7 @@ import React from 'react';
 
 const Filters: React.FC = () => {
   return (
-    <div className="w-full px-4 py-6 bg-white shadow-md">
+    <div className="w-full px-4 py-6 bg-white shadow-md text-black">
       <div className="flex flex-wrap gap-4 justify-center md:justify-between">
         {/* State Filter */}
         <select className="p-2 border rounded">

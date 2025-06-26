@@ -1,26 +1,20 @@
 "use client";
 import React from 'react'
 import Banner from './components/Banner'
-
 import Filters from './components/Filters'
-
 import Footer from './components/Footer'
-import ExpertCard from './components/ExpertProfiles';
+import ExpertProfiles from './components/ExpertProfiles'
+
 
 const page = () => {
   return (
-    <div>
-
-<div>
-<Banner />
+    <div className="min-h-screen bg-[#0f0f0f]">
+      <Banner />
       <Filters />
-      
-</div>
-
-<Footer />
-
+      <ExpertProfiles />
+      <Footer />
     </div>
   )
 }
 
-export default page 
+export default page

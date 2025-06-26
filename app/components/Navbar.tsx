@@ -2,7 +2,7 @@
 "use client";
 import React, { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithGoogle } from "@/utils/authFunctions";
+import { signInWithGoogle } from "@/lib/utils/authFunctions";
 import Link from "next/link";
 
 
