@@ -1,73 +1,62 @@
-'use client';
+"use client";
 import React, { useState } from 'react';
 
-const SearchBar: React.FC = () => {
-  const [query, setQuery] = useState('');
-  const [result, setResult] = useState('');
-  const [loading, setLoading] = useState(false);
+export default function SearchBar() {
+  const [input, setInput] = useState('');
+  const [result, setResult] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSearch = async () => {
-    if (!query.trim()) return;
-
-    setLoading(true);
-    setResult('');
-
-    const payload = { query };
-
-    console.log('Sending request with payload:', payload); // Log the request payload
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResult(null);
+    setError(null);
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/ask', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
+      const formData = new FormData();
+      formData.append("query", input);
+
+      const response = await fetch("http://127.0.0.1:8000/ask", {
+        method: "POST",
+        body: formData,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Error response:', errorData);
-        throw new Error(errorData.message || 'Something went wrong');
-      }
-
       const data = await response.json();
-      setResult(data.result || 'No result returned.');
-    } catch (error) {
-      setResult('❌ Error connecting to API. Please try again.');
-      console.error('Error:', error);
-    } finally {
-      setLoading(false);
+
+      if (response.ok) {
+        setResult(data.answer);
+      } else {
+        setError(data.error || "Something went wrong");
+      }
+    } catch (err) {
+      setError("Error connecting to the backend.");
     }
   };
 
   return (
-    <div className="w-full max-w-xl flex flex-col items-center gap-4">
-      <div className="flex w-full">
+    <div className="w-full max-w-2xl">
+      <form onSubmit={handleSubmit} className="flex gap-2 mb-4">
         <input
-          type="text"  /* Changed to 'text' instead of 'string' */
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search for legal services, lawyers, topics..."
-          className="w-full px-4 py-3 rounded-l-md border text-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Ask your question..."
+          className="border px-3 py-2 rounded w-full"
         />
-        <button
-          onClick={handleSearch}
-          disabled={loading}
-          className="px-5 py-3 bg-[#d4af37] text-white rounded-r-md hover:bg-[#d4af47] transition"
-        >
-          {loading ? 'Searching...' : 'Search'}
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+          Ask
         </button>
-      </div>
+      </form>
 
       {result && (
-        <div className="w-full p-4 border rounded bg-gray-100 text-left whitespace-pre-wrap">
-          <strong>Result:</strong>
-          <p>{result}</p>
+        <div className="bg-green-100 p-4 rounded text-black">
+          <strong>Answer:</strong> {result}
+        </div>
+      )}
+      {error && (
+        <div className="bg-red-100 p-4 rounded text-black">
+          <strong>Error:</strong> {error}
         </div>
       )}
     </div>
   );
-};
-
-export default SearchBar;
+}
