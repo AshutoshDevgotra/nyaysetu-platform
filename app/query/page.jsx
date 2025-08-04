@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import SearchBar from "@/components/SearchBar";
-import ChatResponse from "@/components/ChatResponse";
-import FloatingActions from "@/components/FloatingActions";
+import SearchBar from "../components/SearchBar";
+import ChatResponse from "../components/ChatResponse";
+import FloatingActions from "../components/FloatingActions";
 
 export default function Page() {
   const [messages, setMessages] = useState([]);
@@ -179,68 +179,13 @@ export default function Page() {
                 <p className="retry-info">Retry attempt: {retryCount}</p>
               )}
             </div>
-            <button 
+            <button
               onClick={handleRetry}
               className="retry-button"
               disabled={loading}
             >
               {loading ? "Retrying..." : "Try Again"}
             </button>
-            
-            <style jsx>{`
-              .error-container {
-                background-color: #fef2f2;
-                border: 1px solid #fca5a5;
-                color: #991b1b;
-                padding: 16px;
-                margin-top: 16px;
-                border-radius: 8px;
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                gap: 12px;
-              }
-              
-              .error-content {
-                flex: 1;
-              }
-              
-              .retry-info {
-                font-size: 14px;
-                color: #7f1d1d;
-                margin-top: 4px;
-                margin-bottom: 0;
-              }
-              
-              .retry-button {
-                background-color: #dc2626;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 6px;
-                cursor: pointer;
-                font-weight: 500;
-                font-size: 14px;
-                transition: background-color 0.2s ease;
-                white-space: nowrap;
-              }
-              
-              .retry-button:hover:not(:disabled) {
-                background-color: #b91c1c;
-              }
-              
-              .retry-button:disabled {
-                background-color: #9ca3af;
-                cursor: not-allowed;
-              }
-              
-              @media (max-width: 640px) {
-                .error-container {
-                  flex-direction: column;
-                  align-items: stretch;
-                }
-              }
-            `}</style>
           </div>
         )}
 
@@ -377,7 +322,53 @@ export default function Page() {
           transform: translateY(-2px);
           box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
         }
-        
+
+        .error-container {
+          background-color: #fef2f2;
+          border: 1px solid #fca5a5;
+          color: #991b1b;
+          padding: 16px;
+          margin-top: 16px;
+          border-radius: 8px;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 12px;
+        }
+
+        .error-content {
+          flex: 1;
+        }
+
+        .retry-info {
+          font-size: 14px;
+          color: #7f1d1d;
+          margin-top: 4px;
+          margin-bottom: 0;
+        }
+
+        .retry-button {
+          background-color: #dc2626;
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-weight: 500;
+          font-size: 14px;
+          transition: background-color 0.2s ease;
+          white-space: nowrap;
+        }
+
+        .retry-button:hover:not(:disabled) {
+          background-color: #b91c1c;
+        }
+
+        .retry-button:disabled {
+          background-color: #9ca3af;
+          cursor: not-allowed;
+        }
+
         @media (max-width: 768px) {
           .query-page {
             padding: 20px 12px;
@@ -404,6 +395,11 @@ export default function Page() {
           .example-button {
             padding: 14px 16px;
             font-size: 13px;
+          }
+
+          .error-container {
+            flex-direction: column;
+            align-items: stretch;
           }
         }
       `}</style>
