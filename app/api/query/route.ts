@@ -1,8 +1,11 @@
+import { query as firestoreQuery } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
+  let query: string | undefined;
   try {
-    const { query } = await req.json();
+    const body = await req.json();
+    query = body.query;
 
     if (!query || typeof query !== 'string' || query.trim().length === 0) {
       return NextResponse.json({ error: 'Query is required and must be a valid string' }, { status: 400 });
@@ -12,7 +15,7 @@ export async function POST(req: Request) {
     const backendUrl = process.env.PYTHON_BACKEND_URL || 'http://127.0.0.1:8000';
 
     // Make request to Python RAG backend
-    const response = await fetch(`${backendUrl}/ask`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ask`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -84,7 +87,7 @@ This platform aims to provide AI-assisted legal information, but due to technica
     const fallbackResponse = {
       answer: `I apologize, but the advanced legal AI system is currently unavailable. However, I can provide some general guidance:
 
-For your query: "${query.trim()}"
+For your query: "${(query ?? '').trim()}"
 
 Here are some general resources and suggestions:
 • Visit the official website of the Supreme Court of India (sci.gov.in) for case laws and judgments
