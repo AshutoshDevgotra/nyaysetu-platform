@@ -28,6 +28,7 @@ const Navbar = () => {
       <div className="space-x-6 text-white font-medium">
         <Link href="/find-lawyers" className="hover:text-[#d4af37] transition">Find Lawyers</Link>
         <Link href="/ai-expert" className="hover:text-[#d4af37] transition">AI Expert</Link>
+        <Link href="/document-qa" className="hover:text-[#d4af37] transition">Document Q&A</Link>
         <Link href="/legal-resources" className="hover:text-[#d4af37] transition">Legal Resources</Link>
          <Link href="/client-dashboard" className="hover:text-[#d4af37] transition">Client Dashboard</Link>
          <Link href="/lawyer-dashboard" className="hover:text-[#d4af37] transition">Laywer Dashboard</Link>

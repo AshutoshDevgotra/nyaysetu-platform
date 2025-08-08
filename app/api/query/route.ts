@@ -12,10 +12,10 @@ export async function POST(req: Request) {
     }
 
     // Get backend URL from environment variable or use default
-    const backendUrl = process.env.PYTHON_BACKEND_URL || 'http://127.0.0.1:8000';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.PYTHON_BACKEND_URL || 'http://127.0.0.1:8000';
 
     // Make request to Python RAG backend
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ask`, {
+    const response = await fetch(`${backendUrl}/ask`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -74,10 +74,19 @@ This platform aims to provide AI-assisted legal information, but due to technica
       return NextResponse.json(fallbackResponse, { status: 200 });
     }
 
+    // Enhanced response formatting for better output
+    const formattedAnswer = data.answer || data.response || 'No response received from RAG model';
+
     return NextResponse.json({
-      answer: data.answer || data.response || 'No response received from RAG model',
-      metadata: data.metadata || null,
-      sources: data.sources || null
+      answer: formattedAnswer,
+      metadata: {
+        ...data.metadata,
+        timestamp: new Date().toISOString(),
+        model: 'Llama3-RAG',
+        query_processed: query.trim()
+      },
+      sources: data.sources || null,
+      confidence: data.confidence || null
     });
 
   } catch (error: any) {
