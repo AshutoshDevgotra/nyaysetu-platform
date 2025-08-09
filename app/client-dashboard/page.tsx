@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 
 // utils
@@ -47,20 +48,40 @@ function Button({
 
 // Main Component
 export default function ClientDashboard() {
+  const [activeCase, setActiveCase] = useState("Property Dispute");
+  const [newMessage, setNewMessage] = useState("");
+
+  const handleSendMessage = () => {
+    if (newMessage.trim()) {
+      // Add message sending logic here
+      console.log("Sending message:", newMessage);
+      setNewMessage("");
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-black text-white p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <div className="min-h-screen bg-[#0f0f0f] text-white p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
       <Sidebar />
 
       {/* Left 2/3 Main Section */}
       <main className="lg:col-span-2 space-y-6">
         <header>
-          <h1 className="text-3xl font-bold">Client Dashboard</h1>
-          <p className="text-[#d4af37] mt-1">Track your case progress and communicate with your lawyer</p>
+          <h1 className="text-3xl font-bold text-white">Client Dashboard</h1>
+          <p className="text-[#ffcc99] mt-1">Track your case progress and communicate with your advocate</p>
+          <div className="mt-4 flex gap-4">
+            <div className="bg-[#1a1a1a] border border-[#ffcc99] rounded-lg px-4 py-2">
+              <span className="text-[#ffcc99] text-sm">Active Case:</span>
+              <span className="text-white font-semibold ml-2">{activeCase}</span>
+            </div>
+            <Button className="bg-[#ffcc99] text-black hover:bg-[#ffe0b3]">
+              Schedule Meeting
+            </Button>
+          </div>
         </header>
 
         {/* Case Timeline */}
-        <div className="bg-[#1a1a1a] rounded-2xl p-4 shadow-sm">
-          <h2 className="text-xl font-semibold text-[#d4af37]">Case Timeline</h2>
+        <div className="bg-[#1a1a1a] border border-[#ffcc99] rounded-2xl p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-[#ffcc99] mb-4">Case Timeline</h2>
           <ul className="mt-4 space-y-4">
             {[
               { step: "Case Filed", desc: "Your case was officially filed with the court", date: "10 Apr 2025", status: "completed" },
@@ -90,20 +111,23 @@ export default function ClientDashboard() {
         </div>
 
         {/* Documents */}
-        <div className="bg-[#1a1a1a] rounded-2xl p-4 shadow-sm">
-          <h2 className="text-xl font-semibold text-[#d4af37]">Documents</h2>
-          <div className="flex justify-between items-center mt-4">
-            <Button variant="outline">Upload Document</Button>
+        <div className="bg-[#1a1a1a] border border-[#ffcc99] rounded-2xl p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-[#ffcc99] mb-4">Documents</h2>
+          <div className="flex justify-between items-center mb-4">
+            <Button className="bg-[#ffcc99] text-black hover:bg-[#ffe0b3]">Upload Document</Button>
+            <Button variant="outline" className="border-[#ffcc99] text-[#ffcc99] hover:bg-[#ffcc99] hover:text-black">
+              Request Document
+            </Button>
           </div>
           <table className="w-full mt-4 text-left text-sm">
             <thead>
               <tr className="border-b border-[#333]">
-                <th className="py-2 text-[#d4af37]">Name</th>
-                <th className="text-[#d4af37]">Category</th>
-                <th className="text-[#d4af37]">Uploaded By</th>
-                <th className="text-[#d4af37]">Date</th>
-                <th className="text-[#d4af37]">Status</th>
-                <th className="text-[#d4af37]">Actions</th>
+                <th className="py-3 text-[#ffcc99] text-left">Name</th>
+                <th className="text-[#ffcc99] text-left">Category</th>
+                <th className="text-[#ffcc99] text-left">Uploaded By</th>
+                <th className="text-[#ffcc99] text-left">Date</th>
+                <th className="text-[#ffcc99] text-left">Status</th>
+                <th className="text-[#ffcc99] text-left">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -113,18 +137,24 @@ export default function ClientDashboard() {
                 { name: "Witness_Statement.docx", cat: "Evidence", by: "You", date: "18 Apr 2025", status: "Pending" }
               ].map((doc, idx) => (
                 <tr key={idx} className="border-b border-[#333]">
-                  <td className="py-2 text-white">{doc.name}</td>
-                  <td className="text-white">{doc.cat}</td>
-                  <td className="text-white">{doc.by}</td>
-                  <td className="text-white">{doc.date}</td>
+                  <td className="py-3 text-white font-medium">{doc.name}</td>
+                  <td className="text-[#ffe0b3]">{doc.cat}</td>
+                  <td className="text-[#ffe0b3]">{doc.by}</td>
+                  <td className="text-[#ffe0b3]">{doc.date}</td>
                   <td>
-                    <Badge className={doc.status === "Approved" ? "bg-[#4caf50] text-white" : "bg-yellow-500 text-black"}>
+                    <Badge className={doc.status === "Approved" ? "bg-green-500 text-white" : "bg-yellow-500 text-black"}>
                       {doc.status}
                     </Badge>
                   </td>
-                  <td className="flex gap-2">
-                    <Button size="icon" variant="ghost">👁️</Button>
-                    <Button size="icon" variant="ghost">⬇️</Button>
+                  <td>
+                    <div className="flex gap-2">
+                      <Button size="icon" variant="ghost" className="text-[#ffcc99] hover:bg-[#ffcc99] hover:text-black">
+                        👁️
+                      </Button>
+                      <Button size="icon" variant="ghost" className="text-[#ffcc99] hover:bg-[#ffcc99] hover:text-black">
+                        ⬇️
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -136,8 +166,8 @@ export default function ClientDashboard() {
       {/* Right Sidebar - Upcoming Hearings & Messages */}
       <aside className="space-y-6">
         {/* Upcoming Hearings */}
-        <div className="bg-[#1a1a1a] rounded-2xl p-4 shadow-sm">
-          <h2 className="text-xl font-semibold text-[#d4af37]">Upcoming Hearings</h2>
+        <div className="bg-[#1a1a1a] border border-[#ffcc99] rounded-2xl p-4 shadow-sm">
+          <h2 className="text-xl font-semibold text-[#ffcc99]">Upcoming Hearings</h2>
           <div className="mt-4 space-y-4">
             <div className="border border-[#333] p-3 rounded-lg">
               <p className="text-white font-medium">Initial Hearing</p>
@@ -154,19 +184,36 @@ export default function ClientDashboard() {
         </div>
 
         {/* Recent Messages */}
-        <div className="bg-[#1a1a1a] rounded-2xl p-4 shadow-sm">
-          <h2 className="text-xl font-semibold text-[#d4af37]">Recent Messages</h2>
-          <div className="mt-4 space-y-3 text-sm">
-            <div className="bg-[#262626] p-3 rounded-md">
+        <div className="bg-[#1a1a1a] border border-[#ffcc99] rounded-2xl p-4 shadow-sm">
+          <h2 className="text-xl font-semibold text-[#ffcc99] mb-4">Recent Messages</h2>
+          <div className="space-y-3 text-sm">
+            <div className="bg-[#262626] border border-[#333] p-3 rounded-md">
               <p className="font-medium text-white">Adv. Vikram Reddy</p>
-              <p className="text-gray-400">I've reviewed the documents you sent. We need to discuss the next steps for your case.</p>
+              <p className="text-[#ffe0b3]">I've reviewed the documents you sent. We need to discuss the next steps for your case.</p>
               <p className="text-gray-500 text-xs mt-1">2 hours ago</p>
             </div>
-            <div className="bg-[#262626] p-3 rounded-md">
+            <div className="bg-[#262626] border border-[#333] p-3 rounded-md">
               <p className="font-medium text-white">Adv. Priya Malhotra</p>
-              <p className="text-gray-400">The hearing date has been confirmed. Please make sure you're available on the scheduled date.</p>
+              <p className="text-[#ffe0b3]">The hearing date has been confirmed. Please make sure you're available on the scheduled date.</p>
               <p className="text-gray-500 text-xs mt-1">Yesterday</p>
             </div>
+          </div>
+          
+          {/* Message Input */}
+          <div className="mt-4 space-y-2">
+            <textarea
+              className="w-full p-3 bg-[#0f0f0f] border border-[#333] rounded-lg text-white placeholder-gray-400 resize-none focus:border-[#ffcc99] focus:outline-none"
+              rows={3}
+              placeholder="Type your message to advocate..."
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+            />
+            <Button 
+              onClick={handleSendMessage}
+              className="w-full bg-[#ffcc99] text-black hover:bg-[#ffe0b3]"
+            >
+              Send Message
+            </Button>
           </div>
         </div>
       </aside>

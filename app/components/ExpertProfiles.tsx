@@ -39,7 +39,7 @@ export default function ExpertProfiles() {
       pricePerAppearance: "2500",
       court: "Bombay High Court",
       state: "Bombay",
-      image: "/advocates/PoojaPatil.jpeg",
+      image: "/Advocates/PoojaPatil.jpeg",
       createdAt: new Date("2023-01-15"),
     },
    {
@@ -53,7 +53,7 @@ export default function ExpertProfiles() {
   pricePerAppearance: "3000",
   court: "Tis Hazari Court",
   state: "Delhi",
-  image: "/advocates/AdityaChauhan.jpg",
+  image: "/Advocates/AdityaChauhan.jpg",
   createdAt: new Date("2024-01-04"),
 },
 {
@@ -67,7 +67,7 @@ export default function ExpertProfiles() {
   pricePerAppearance: "2500",
   court: "Bombay High Court",
   state: "Maharashtra",
-  image: "/advocates/SakshiBaadkar.jpg",
+  image: "/Advocates/SakshiBaadkar.jpg",
   createdAt: new Date("2024-01-05"),
 },
 {
@@ -81,7 +81,7 @@ export default function ExpertProfiles() {
   pricePerAppearance: "20000",
   court: "Supreme Court of India",
   state: "Delhi",
-  image: "/advocates/AmishAggarwala.jpg",
+  image: "/Advocates/AmishAggarwala.jpg",
   createdAt: new Date("2024-01-06"),
 },
 {
@@ -95,7 +95,7 @@ export default function ExpertProfiles() {
   pricePerAppearance: "4000",
   court: "Delhi High Court",
   state: "Delhi",
-  image: "/advocates/SagarPanghal.jpg",
+  image: "/Advocates/SagarPanghal.jpg",
   createdAt: new Date("2024-01-07"),
 },
 {
@@ -109,7 +109,7 @@ export default function ExpertProfiles() {
   pricePerAppearance: "12000",
   court: "Supreme Court of India",
   state: "Delhi",
-  image: "/advocates/VipinPoria.jpg",
+  image: "/Advocates/VipinPoria.jpg",
   createdAt: new Date("2024-01-08"),
 },
 {
@@ -123,7 +123,7 @@ export default function ExpertProfiles() {
   pricePerAppearance: "5000",
   court: "Supreme Court of India",
   state: "Delhi",
-  image: "/advocates/MandeepBaisla.jpg",
+  image: "/Advocates/MandeepBaisla.jpg",
   createdAt: new Date("2024-01-09"),
 },
 {
@@ -137,7 +137,7 @@ export default function ExpertProfiles() {
   pricePerAppearance: "6000",
   court: "Saket District Court",
   state: "Delhi",
-  image: "/advocates/KanikaBhardwaj.jpg",
+  image: "/Advocates/KanikaBhardwaj.jpg",
   createdAt: new Date("2024-01-10"),
 },
 {
@@ -151,7 +151,7 @@ export default function ExpertProfiles() {
   pricePerAppearance: "5000",
   court: "Patiala House Court",
   state: "Delhi",
-  image: "/advocates/AyanSharma.jpg",
+  image: "/Advocates/AyanSharma.jpg",
   createdAt: new Date("2024-01-11"),
 },
 
@@ -350,18 +350,22 @@ export default function ExpertProfiles() {
                       <span className="text-sm text-[#ffcc99]">Court Appearance:</span>
                       <span className="font-semibold text-[#ffe0b3]">₹{advocate.pricePerAppearance}</span>
                     </div>
-                    <div className="space-y-2">
-                      <Button className="w-full bg-[#ffcc99] text-black hover:bg-[#ffe0b3] font-semibold">
-                        Book Consultation
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full border-[#ffcc99] text-[#ffcc99] hover:bg-[#ffcc99] hover:text-black"
-                      >
-                        <Mail className="h-4 w-4 mr-2" />
-                        Contact Advocate
-                      </Button>
-                    </div>
+                                          <div className="space-y-2">
+                        <Button 
+                          onClick={() => window.location.href = '/appointment-form'}
+                          className="w-full bg-[#ffcc99] text-black hover:bg-[#ffe0b3] font-semibold"
+                        >
+                          Book Consultation
+                        </Button>
+                        <Button
+                          onClick={() => window.open(`mailto:${advocate.email}?subject=Legal Consultation Inquiry&body=Dear Adv. ${advocate.fullName},%0A%0AI am interested in consulting with you regarding a legal matter. Please let me know your availability.%0A%0AThank you.`, '_blank')}
+                          variant="outline"
+                          className="w-full border-[#ffcc99] text-[#ffcc99] hover:bg-[#ffcc99] hover:text-black"
+                        >
+                          <Mail className="h-4 w-4 mr-2" />
+                          Contact Advocate
+                        </Button>
+                      </div>
                   </div>
 
                   <div className="text-xs text-[#666] text-center">
