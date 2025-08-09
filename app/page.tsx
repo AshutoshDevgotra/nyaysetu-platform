@@ -11,15 +11,15 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async (query: string) => {
-    try {
-      setLoading(true);
-      setResponse(null);
+  try {
+    setLoading(true);
+    setResponse(null);
 
-      const res = await fetch("/api/query", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
-      });
+    const res = await fetch("http://localhost:8082/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    });
 
       if (!res.ok) {
         throw new Error(`Request failed with status ${res.status}`);

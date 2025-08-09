@@ -4,20 +4,24 @@ import SearchBar from "../components/SearchBar";
 import ChatResponse from "../components/ChatResponse";
 import FloatingActions from "../components/FloatingActions";
 
-export default function Page() {
+export default async function Page() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [error, setError] = useState(null);
 
   const makeRequest = async (userQuery, attempt = 1) => {
-    const response = await fetch("/api/query", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ query: userQuery }),
-    });
+  const response = await fetch("http://localhost:8082/ask", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ query: userQuery }),
+  });
+
+  return response.json();
+};
+
 
     const data = await response.json();
 
@@ -27,7 +31,6 @@ export default function Page() {
         console.log(`Attempt ${attempt} failed, retrying...`);
         await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
         return makeRequest(userQuery, attempt + 1);
-      }
       throw new Error(data.error || `Request failed with status ${response.status}`);
     }
 
