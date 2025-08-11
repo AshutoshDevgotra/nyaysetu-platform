@@ -12,7 +12,7 @@ export default function Page() {
 
   const makeRequest = async (userQuery, attempt = 1) => {
     try {
-      const response = await fetch("http://localhost:8082/ask", {
+      const response = await fetch("https://api.growwithgarry.in/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: userQuery }),

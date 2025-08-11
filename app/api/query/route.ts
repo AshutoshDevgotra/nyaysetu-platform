@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     }
 
     // Get backend URL from environment variable or use default
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.PYTHON_BACKEND_URL || 'http://13.60.87.12:8082';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.PYTHON_BACKEND_URL || 'https://api.growwithgarry.in/ask';
 
     // Make request to Python RAG backend
     const response = await fetch(`${backendUrl}/ask`, {

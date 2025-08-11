@@ -15,7 +15,7 @@ export default function Home() {
     setLoading(true);
     setResponse(null);
 
-    const res = await fetch("http://13.60.87.12:8082/ask", {
+    const res = await fetch("https://api.growwithgarry.in/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query }),
