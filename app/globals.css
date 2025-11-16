@@ -3,6 +3,12 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Brand palette - tuned for comfort and professionalism */
+  --brand: #F2D3A3; /* softer amber */
+  --brand-weak: #F8E7CC; /* lighter tint for hovers */
+  --surface-900: #0f0f0f;
+  --surface-800: #1a1a1a;
+  --text-secondary: #EAD8C0;
 }
 
 @theme inline {
@@ -22,5 +28,63 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+/* Experience refinements */
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: #ffcc99;
+  color: #0a0a0a;
+}
+
+/* Utility: glass and focus ring for consistent UI */
+.glass {
+  background: rgba(10, 10, 10, 0.6);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 204, 153, 0.15);
+}
+
+.focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 204, 153, 0.45);
+}
+
+/* Subtle grid background helper */
+.bg-grid {
+  background-image: linear-gradient(rgba(255, 204, 153, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 204, 153, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px, 24px 24px;
+  background-position: -1px -1px, -1px -1px;
+}
+
+/* Brand utility classes for consistent theming */
+.brand { color: var(--brand) !important; }
+.brand-bg { background-color: var(--brand) !important; color: #0a0a0a !important; }
+.brand-bg-weak { background-color: var(--brand-weak) !important; color: #0a0a0a !important; }
+.brand-border { border-color: var(--brand) !important; }
+.text-secondary { color: var(--text-secondary) !important; }
+
+/* Subtle hover zoom utility (Apple-like restraint) */
+.hover-zoom {
+  transform: translateZ(0);
+  transition: transform 220ms ease, box-shadow 220ms ease, filter 220ms ease;
+}
+.hover-zoom:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+  filter: saturate(1.02);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hover-zoom, .hover-zoom:hover {
+    transition: none !important;
+    transform: none !important;
+  }
 }

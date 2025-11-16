@@ -6,6 +6,7 @@ import { Button } from "@/app/components/ui/button"
 import { Star, MapPin, Calendar, Scale, Phone, Mail } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useState } from "react"
+import { motion } from "framer-motion"
 
 interface Advocate {
   id: string
@@ -22,7 +23,11 @@ interface Advocate {
   createdAt: any
 }
 
-export default function ExpertProfiles() {
+interface ExpertProfilesProps {
+  teaser?: boolean;
+}
+
+export default function ExpertProfiles({ teaser = false }: ExpertProfilesProps) {
   const [advocates, setAdvocates] = useState<Advocate[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -257,6 +262,42 @@ export default function ExpertProfiles() {
     )
   }
 
+  if (teaser) {
+    const teaserList = staticAdvocates.slice(0, 8);
+    const loop = [...teaserList, ...teaserList];
+    return (
+      <section className="bg-[#0f0f0f] py-8 px-4">
+        <div className="container mx-auto">
+          <div className="text-center mb-6">
+            <h2 className="text-3xl font-bold text-white mb-2">Top Verified Advocates</h2>
+            <p className="text-[#ffcc99]">Peek at a few profiles — verified via Bar Council ID & Aadhaar-linked auth.</p>
+          </div>
+          <div className="relative overflow-hidden">
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#0f0f0f] to-transparent z-10 blur-sm" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#0f0f0f] to-transparent z-10 blur-sm" />
+            <motion.div className="flex gap-4" initial={{ x: 0 }} animate={{ x: [0, -800, 0] }} transition={{ duration: 24, repeat: Infinity, ease: "linear" }}>
+              {loop.map((adv, idx) => (
+                <div key={`${adv.id}-${idx}`} className="shrink-0 bg-[#1a1a1a] border border-[#ffcc99] rounded-xl p-4 w-[260px] hover:shadow-lg hover:shadow-[#ffcc99]/20 transition hover-zoom">
+                  <div className="flex items-center gap-3 mb-2">
+                    <img src={adv.image} alt={adv.fullName} width={48} height={48} className="rounded-full border-2 border-[#ffcc99] object-cover" />
+                    <div>
+                      <div className="text-white font-semibold text-sm">Adv. {adv.fullName}</div>
+                      <div className="text-[#ffe0b3] text-xs">{adv.court}</div>
+                    </div>
+                  </div>
+                  <div className="text-secondary text-xs line-clamp-2">{adv.caseTypes}</div>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+          <div className="text-center mt-6">
+            <a href="/find-lawyers" className="inline-block px-6 py-3 rounded-lg border-2 brand-border brand hover:bg-[#ffcc99] hover:text-black transition">View all advocates</a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <div className="bg-[#0f0f0f] min-h-screen py-8 px-4">
       <div className="container mx-auto">
@@ -278,9 +319,17 @@ export default function ExpertProfiles() {
             const caseCount = generateCaseCount()
 
             return (
-              <Card
+              <motion.div
                 key={advocate.id}
-                className="bg-[#1a1a1a] border border-[#ffcc99] hover:shadow-lg hover:shadow-[#ffcc99]/20 transition-all duration-300 text-white "
+                className="bg-[#1a1a1a] brand-border border hover:shadow-lg hover:shadow-[#ffcc99]/20 transition-all duration-300 text-white rounded-lg"
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                whileHover={{ y: -4, scale: 1.02 }}
+                transition={{ duration: 0.45 }}
+              >
+              <Card
+                className="bg-transparent border-0 text-white"
               >
                 <CardHeader className="text-center pb-4">
                   <div className="relative mx-auto mb-4 border-[#ffcc99] overflow-visible">
@@ -299,7 +348,7 @@ export default function ExpertProfiles() {
                   <div className="flex items-center justify-center gap-2 mt-2">
                     <div className="flex items-center">
                       <Star className="h-4 w-4 fill-[#ffcc99] text-[#ffcc99]" />
-                      <span className="text-sm font-medium ml-1 text-[#ffe0b3]">{rating}</span>
+                    <span className="text-sm font-medium ml-1 text-secondary">{rating}</span>
                     </div>
                     <span className="text-[#666]">•</span>
                     <span className="text-sm text-[#ffcc99]">{caseCount} cases</span>
@@ -307,19 +356,19 @@ export default function ExpertProfiles() {
                 </CardHeader>
 
                 <CardContent className="space-y-4">
-                  <div className="flex items-center gap-2 text-sm text-[#ffcc99]">
+                  <div className="flex items-center gap-2 text-sm brand">
                     <Calendar className="h-4 w-4" />
                     <span>{advocate.experience} years experience</span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-sm text-[#ffcc99]">
+                  <div className="flex items-center gap-2 text-sm brand">
                     <MapPin className="h-4 w-4" />
                     <span>
                       {advocate.court}, {advocate.state}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-sm text-[#ffcc99]">
+                  <div className="flex items-center gap-2 text-sm brand">
                     <Scale className="h-4 w-4" />
                     <span>Bar ID: {advocate.barCouncilId}</span>
                   </div>
@@ -330,7 +379,7 @@ export default function ExpertProfiles() {
                       {caseTypesList.map((caseType, index) => (
                         <Badge
                           key={index}
-                          className="bg-[#2b2b2b] text-[#ffe0b3] border border-[#ffcc99] text-xs hover:bg-[#ffcc99] hover:text-black"
+                          className="bg-[#2b2b2b] text-secondary brand-border border text-xs hover:bg-[#ffcc99] hover:text-black"
                         >
                           {caseType}
                         </Badge>
@@ -373,6 +422,7 @@ export default function ExpertProfiles() {
                   </div>
                 </CardContent>
               </Card>
+              </motion.div>
             )
           })}
         </div>
