@@ -13,7 +13,11 @@ const firebaseConfig = {
 };
 
 // Only initialize Firebase if we have a valid API key
-let app, db, auth, provider, storage;
+let app: ReturnType<typeof initializeApp> | undefined;
+let db: ReturnType<typeof getFirestore> | null = null;
+let auth: ReturnType<typeof getAuth> | null = null;
+let provider: GoogleAuthProvider | null = null;
+let storage: ReturnType<typeof getStorage> | null = null;
 
 try {
   if (firebaseConfig.apiKey !== 'placeholder-api-key') {
@@ -25,17 +29,9 @@ try {
   } else {
     // Mock objects for development/build
     console.warn('Firebase not initialized - using placeholder configuration');
-    db = null;
-    auth = null;
-    provider = null;
-    storage = null;
   }
 } catch (error) {
   console.error('Firebase initialization error:', error);
-  db = null;
-  auth = null;
-  provider = null;
-  storage = null;
 }
 
 export { db, auth, provider, storage };

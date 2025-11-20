@@ -22,10 +22,11 @@ export default function Home() {
     setLoading(true);
     setResponse(null);
 
-    const res = await fetch("https://api.growwithgarry.in/ask", {
+    const res = await fetch("/api/query", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query }),
+      cache: "no-store",
     });
 
       if (!res.ok) {

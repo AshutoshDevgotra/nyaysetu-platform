@@ -12,10 +12,11 @@ export default function Page() {
 
   const makeRequest = async (userQuery, attempt = 1) => {
     try {
-      const response = await fetch("https://api.growwithgarry.in/ask", {
+      const response = await fetch("/api/query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: userQuery }),
+        cache: "no-store",
       });
 
       const data = await response.json();

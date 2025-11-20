@@ -11,10 +11,16 @@ export async function POST(req: Request) {
     }
 
     // Get backend URL from environment variable or use default
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.PYTHON_BACKEND_URL || 'https://api.growwithgarry.in/ask';
+    const backendBaseUrl =
+      process.env.NEXT_PUBLIC_BACKEND_URL ||
+      process.env.PYTHON_BACKEND_URL ||
+      'https://api.growwithgarry.in';
+
+    const sanitizedBase = backendBaseUrl.replace(/\/+$/, '');
+    const backendUrl = sanitizedBase.endsWith('/ask') ? sanitizedBase : `${sanitizedBase}/ask`;
 
     // Make request to Python RAG backend
-    const response = await fetch(`${backendUrl}/ask`, {
+    const response = await fetch(backendUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -79,9 +85,9 @@ This platform aims to provide AI-assisted legal information, but due to technica
     return NextResponse.json({
       answer: formattedAnswer,
       metadata: {
-        ...data.metadata,
         timestamp: new Date().toISOString(),
-        model: 'Llama3-RAG',
+        model: 'Llama3-RAG', // Default fallback
+        ...data.metadata, // Allow backend to override
         query_processed: query.trim()
       },
       sources: data.sources || null,

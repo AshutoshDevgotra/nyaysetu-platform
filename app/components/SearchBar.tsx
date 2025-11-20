@@ -28,10 +28,11 @@ export default function SearchBar({ onSearch, loading = false }: SearchBarProps)
         </div>
         <input
           type="text"
+          name="legal-query"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask your legal question about Indian law, constitution, or acts..."
-          className="search-input"
+          className="search-input "
           disabled={loading}
           maxLength={500}
         />
@@ -76,6 +77,7 @@ export default function SearchBar({ onSearch, loading = false }: SearchBarProps)
           position: relative;
           flex: 1;
           min-width: 300px;
+          color: white;
         }
 
         .search-icon {
@@ -89,23 +91,27 @@ export default function SearchBar({ onSearch, loading = false }: SearchBarProps)
         .search-input {
           width: 100%;
           padding: 12px 16px 12px 44px;
-          border: 2px solid #e5e7eb;
-          border-radius: 8px;
+          border: 2px solid rgba(255, 204, 153, 0.5);
+          border-radius: 12px;
           font-size: 16px;
-          color: #1f2937;
-          background-color: white;
+          color: #ffffff;
+          background-color: rgba(17, 17, 17, 0.85);
           transition: all 0.2s ease;
           outline: none;
         }
 
+        .search-input::placeholder {
+          color: rgba(248, 231, 204, 0.6);
+        }
+
         .search-input:focus {
-          border-color: #10b981;
-          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+          border-color: #f2d3a3;
+          box-shadow: 0 0 0 3px rgba(242, 211, 163, 0.2);
         }
 
         .search-input:disabled {
-          background-color: #f9fafb;
-          color: #9ca3af;
+          color: rgba(255, 255, 255, 0.6);
+          background-color: #1f2937;
           cursor: not-allowed;
         }
 
@@ -133,7 +139,7 @@ export default function SearchBar({ onSearch, loading = false }: SearchBarProps)
           align-items: center;
           justify-content: center;
           padding: 12px 24px;
-          background: linear-gradient(135deg, #10b981, #059669);
+          background: linear-gradient(135deg, #f2d3a3, #f8e7cc);
           color: white;
           border: none;
           border-radius: 8px;
@@ -143,17 +149,19 @@ export default function SearchBar({ onSearch, loading = false }: SearchBarProps)
           transition: all 0.2s ease;
           white-space: nowrap;
           min-width: 130px;
-          box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+          color: #0a0a0a;
+          box-shadow: 0 6px 20px rgba(242, 211, 163, 0.25);
         }
 
         .search-button:hover:not(:disabled) {
-          background: linear-gradient(135deg, #059669, #047857);
+          background: linear-gradient(135deg, #ffe7c5, #f2d3a3);
           transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+          box-shadow: 0 10px 24px rgba(242, 211, 163, 0.35);
         }
 
         .search-button:disabled {
-          background-color: #9ca3af;
+          background: #3f3f46;
+          color: #a1a1aa;
           cursor: not-allowed;
           transform: none;
           box-shadow: none;

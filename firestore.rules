@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Allow public read/write ONLY for the waitlist stats
+    // This is necessary for the live counter to work without authentication
+    match /waitlist_stats/counts {
+      allow read: if true;
+      allow write: if true;
+    }
+    
+    // Allow anyone to add an entry, but NOT read or modify others' entries
+    match /waitlist_entries/{entryId} {
+      allow create: if request.resource.data.keys().hasAll(['email', 'role', 'timestamp']);
+      allow read, update, delete: if false;
+    }
+  }
+}
