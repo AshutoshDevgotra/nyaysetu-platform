@@ -66,7 +66,7 @@ export default function Banner({ onSearch }: BannerProps) {
           <input
             type="text"
             placeholder="Ask your legal question or describe your situation..."
-            className="px-6 py-4 rounded-lg text-black w-full max-w-2xl text-lg border-2 border-[#ffcc99] focus:outline-none focus:border-[#ffe0b3] shadow-lg"
+            className="px-6 py-4 rounded-lg bg-white text-black w-full max-w-2xl text-lg border-2 border-[#ffcc99] focus:outline-none focus:border-[#ffe0b3] shadow-lg placeholder:text-gray-500"
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
@@ -80,8 +80,8 @@ export default function Banner({ onSearch }: BannerProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
           {[{ icon: "⚖️", title: "Expert Advocates", desc: "Verified legal professionals with proven track records" },
-            { icon: "💰", title: "Affordable Pricing", desc: "Transparent, competitive rates for quality legal services" },
-            { icon: "🤝", title: "Easy Process", desc: "Simple registration and booking for quick legal assistance" }].map((item, idx) => (
+          { icon: "💰", title: "Affordable Pricing", desc: "Transparent, competitive rates for quality legal services" },
+          { icon: "🤝", title: "Easy Process", desc: "Simple registration and booking for quick legal assistance" }].map((item, idx) => (
             <motion.div
               key={item.title}
               className="bg-[#1a1a1a] brand-border border rounded-lg p-6 hover:shadow-lg hover:shadow-[#ffcc99]/20 transition-all duration-300 hover-zoom"
