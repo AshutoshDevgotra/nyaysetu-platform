@@ -15,6 +15,7 @@ import Footer from "./components/Footer";
 
 export default function Home() {
   const [response, setResponse] = useState<string | null>(null);
+  const [sources, setSources] = useState<Array<{ content: string; metadata: any }> | null>(null);
   const [loading, setLoading] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
 
@@ -36,6 +37,11 @@ export default function Home() {
 
       const data = await res.json();
       setResponse(data.answer);
+      if (data.sources) {
+        setSources(data.sources);
+      } else {
+        setSources(null);
+      }
     } catch (err) {
       console.error("Search failed:", err);
       setResponse("Something went wrong. Please try again.");
@@ -80,6 +86,18 @@ export default function Home() {
                     {response}
                   </ReactMarkdown>
                 </div>
+                {sources && sources.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-[#333]">
+                    <p className="text-sm text-[#ffcc99] mb-2">📚 Sources:</p>
+                    <ul className="list-disc ml-5 space-y-1 text-[#ffe0b3]">
+                      {sources.map((src, idx) => (
+                        <li key={idx}>
+                          <strong>{src.metadata?.source || 'Unknown source'}:</strong> {src.content?.slice(0, 200)}...
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 <div className="mt-4 pt-4 border-t border-[#333]">
                   <p className="text-sm text-[#ffcc99]">
                     💡 For personalized legal advice, consult with our verified advocates below.
