@@ -254,9 +254,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support & Contact
 
-- **Email**: contact@nyaysetu.com
-- **Phone**: +91 98765 43210
-- **Address**: New Delhi, India
+- **Email**: ashutoshdevgotra@gmail.com
+- **Phone**: +91 9877292856
+- **Address**: Punjab, India
 
 ## 🙏 Acknowledgments
 
