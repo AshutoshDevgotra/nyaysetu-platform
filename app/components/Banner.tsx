@@ -18,7 +18,7 @@ export default function Banner({ onSearch }: BannerProps) {
   };
 
   return (
-    <section className="relative bg-gradient-to-br from-[#0f0f0f] via-[#111] to-[#0f0f0f] py-20 px-4 text-center overflow-hidden bg-grid">
+    <section className="relative bg-gradient-to-br from-[#0f0f0f] via-[#111] to-[#0f0f0f] pt-16 pb-4 px-4 text-center overflow-hidden bg-grid">
       {/* Floating background accents */}
       <motion.div
         aria-hidden
@@ -77,25 +77,6 @@ export default function Banner({ onSearch }: BannerProps) {
             Get Legal Help
           </button>
         </motion.form>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-          {[{ icon: "⚖️", title: "Expert Advocates", desc: "Verified legal professionals with proven track records" },
-          { icon: "💰", title: "Affordable Pricing", desc: "Transparent, competitive rates for quality legal services" },
-          { icon: "🤝", title: "Easy Process", desc: "Simple registration and booking for quick legal assistance" }].map((item, idx) => (
-            <motion.div
-              key={item.title}
-              className="bg-[#1a1a1a] brand-border border rounded-lg p-6 hover:shadow-lg hover:shadow-[#ffcc99]/20 transition-all duration-300 hover-zoom"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * (idx + 1), duration: 0.45 }}
-              whileHover={{ y: -4, scale: 1.02 }}
-            >
-              <div className="brand text-3xl mb-3">{item.icon}</div>
-              <h3 className="text-white font-bold text-lg mb-2">{item.title}</h3>
-              <p className="text-secondary text-sm">{item.desc}</p>
-            </motion.div>
-          ))}
-        </div>
       </div>
     </section>
   );

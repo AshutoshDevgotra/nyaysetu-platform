@@ -3,61 +3,109 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { Button } from "@/app/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/app/components/ui/card";
-import { Eye, EyeOff, Mail, Lock, User, Scale } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Scale, Shield, Phone, KeyRound } from "lucide-react";
+
+// Schemas
+const emailLoginSchema = z.object({
+  email: z.string().min(1, "Email is required").email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+const otpLoginSchema = z.object({
+  phone: z.string().min(10, "Phone number must be at least 10 digits").regex(/^[0-9]+$/, "Must contain only digits"),
+  otp: z.string().optional(),
+});
+
+type EmailLoginForm = z.infer<typeof emailLoginSchema>;
+type OtpLoginForm = z.infer<typeof otpLoginSchema>;
+
+type RoleType = "client" | "advocate" | "admin";
+type LoginMethodType = "email" | "otp";
 
 export default function LoginPage() {
-  const [loginType, setLoginType] = useState<"client" | "advocate">("client");
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [role, setRole] = useState<RoleType>("client");
+  const [loginMethod, setLoginMethod] = useState<LoginMethodType>("email");
   const [showPassword, setShowPassword] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const emailForm = useForm<EmailLoginForm>({
+    resolver: zodResolver(emailLoginSchema),
+    defaultValues: { email: "", password: "" },
+  });
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const otpForm = useForm<OtpLoginForm>({
+    resolver: zodResolver(otpLoginSchema),
+    defaultValues: { phone: "", otp: "" },
+  });
+
+  const onEmailSubmit = async (data: EmailLoginForm) => {
     setIsLoading(true);
-    
+    // Clear any previous error
+    emailForm.clearErrors();
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Redirect based on login type
-      if (loginType === "client") {
-        router.push("/client-dashboard");
-      } else {
-        router.push("/lawyer-dashboard");
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: data.email, password: data.password }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to authenticate");
       }
-    } catch (error) {
-      console.error("Login error:", error);
+
+      // Cookies are automatically set by the API response (httpOnly)
+      // Redirect based on role returned by API (or selected role if preferred, but API is authoritative)
+      const userRole = result.user?.role || role;
+
+      if (userRole === "client") router.push("/client-dashboard");
+      else if (userRole === "advocate") router.push("/lawyer-dashboard");
+      else router.push("/admin-dashboard");
+    } catch (error: any) {
+      console.error(error);
+      emailForm.setError("root", { message: error.message });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const onSendOtp = async () => {
+    const isValid = await otpForm.trigger("phone");
+    if (isValid) {
+      setIsLoading(true);
+      try {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setOtpSent(true);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const onOtpSubmit = async (data: OtpLoginForm) => {
+    if (!data.otp || data.otp.length !== 6) {
+      otpForm.setError("otp", { message: "OTP must be 6 digits" });
+      return;
+    }
     setIsLoading(true);
     try {
-      // Simulate Google login
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (loginType === "client") {
-        router.push("/client-dashboard");
-      } else {
-        router.push("/lawyer-dashboard");
-      }
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      document.cookie = `auth-token=mock-token; path=/`;
+      document.cookie = `user-role=${role}; path=/`;
+
+      if (role === "client") router.push("/client-dashboard");
+      else if (role === "advocate") router.push("/lawyer-dashboard");
+      else router.push("/admin-dashboard");
     } catch (error) {
-      console.error("Google login error:", error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -66,7 +114,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f0f0f] via-[#1a1a1a] to-[#0f0f0f] flex items-center justify-center px-4 py-8">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
+      <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 border border-[#ffcc99] rounded-full"></div>
         <div className="absolute bottom-20 right-10 w-24 h-24 border border-[#ffcc99] rounded-full"></div>
         <div className="absolute top-1/2 left-1/4 w-16 h-16 border border-[#ffcc99] rounded-full"></div>
@@ -83,168 +131,196 @@ export default function LoginPage() {
             </h1>
           </div>
           <p className="text-[#ffe0b3] text-lg">
-            Access your legal platform account
+            Enterprise Legal System Access
           </p>
         </div>
 
-        {/* Login Type Selector */}
+        {/* Role Selector */}
         <div className="mb-6">
           <div className="flex bg-[#1a1a1a] border border-[#ffcc99] rounded-lg p-1">
-            <button
-              type="button"
-              onClick={() => setLoginType("client")}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-md font-medium transition-all duration-300 ${
-                loginType === "client"
-                  ? "bg-[#ffcc99] text-black"
+            {[
+              { id: "client", label: "Client", icon: User },
+              { id: "advocate", label: "Advocate", icon: Scale },
+              { id: "admin", label: "Admin", icon: Shield }
+            ].map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                onClick={() => setRole(r.id as RoleType)}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-2 rounded-md font-medium text-sm transition-all duration-300 ${role === r.id
+                  ? "bg-[#ffcc99] text-black shadow-sm"
                   : "text-[#ffcc99] hover:bg-[#2a2a2a]"
-              }`}
-            >
-              <User className="h-4 w-4" />
-              Client
-            </button>
-            <button
-              type="button"
-              onClick={() => setLoginType("advocate")}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-md font-medium transition-all duration-300 ${
-                loginType === "advocate"
-                  ? "bg-[#ffcc99] text-black"
-                  : "text-[#ffcc99] hover:bg-[#2a2a2a]"
-              }`}
-            >
-              <Scale className="h-4 w-4" />
-              Advocate
-            </button>
+                  }`}
+              >
+                <r.icon className="h-4 w-4" />
+                <span className="hidden sm:inline">{r.label}</span>
+              </button>
+            ))}
           </div>
         </div>
 
         <Card className="bg-[#1a1a1a] border border-[#ffcc99] shadow-xl">
-          <CardHeader>
-            <h2 className="text-2xl font-bold text-center text-white">
-              {loginType === "client" ? "Client Login" : "Advocate Login"}
+          <CardHeader className="pb-4">
+            <div className="flex justify-between items-center mb-4 border-b border-[#333] pb-2">
+              <button
+                onClick={() => setLoginMethod("email")}
+                className={`text-sm font-semibold pb-2 px-2 transition-colors ${loginMethod === "email" ? "text-[#ffcc99] border-b-2 border-[#ffcc99]" : "text-[#888] hover:text-[#bbb]"}`}
+              >
+                Email
+              </button>
+              <button
+                onClick={() => setLoginMethod("otp")}
+                className={`text-sm font-semibold pb-2 px-2 transition-colors ${loginMethod === "otp" ? "text-[#ffcc99] border-b-2 border-[#ffcc99]" : "text-[#888] hover:text-[#bbb]"}`}
+              >
+                Phone OTP
+              </button>
+            </div>
+            <h2 className="text-xl font-bold text-center text-white capitalize">
+              {role} Login
             </h2>
-            <p className="text-center text-[#ffe0b3]">
-              {loginType === "client" 
-                ? "Access your cases and legal services"
-                : "Manage your practice and clients"
-              }
+            <p className="text-center text-[#ffe0b3] text-sm">
+              {role === "client" ? "Access your cases & services" : role === "advocate" ? "Manage your legal practice" : "System administration access"}
             </p>
           </CardHeader>
-          
+
           <CardContent className="space-y-6">
-            <form onSubmit={handleLogin} className="space-y-4">
-              {/* Email Field */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-[#ffe0b3]">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#ffcc99] h-4 w-4" />
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="w-full pl-10 pr-4 py-3 bg-[#0f0f0f] border border-[#333] rounded-lg text-white placeholder-gray-400 focus:border-[#ffcc99] focus:outline-none transition-colors"
-                    placeholder="Enter your email"
-                    required
-                  />
+            {loginMethod === "email" ? (
+              <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-[#ffe0b3]">Email Address</label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#ffcc99] h-4 w-4" />
+                    <input
+                      {...emailForm.register("email")}
+                      className={`w-full pl-10 pr-4 py-3 bg-[#0f0f0f] border ${emailForm.formState.errors.email ? 'border-red-500' : 'border-[#333]'} rounded-lg text-white placeholder-gray-500 focus:border-[#ffcc99] focus:outline-none transition-colors`}
+                      placeholder="admin@nyaysetu.in"
+                    />
+                  </div>
+                  {emailForm.formState.errors.email && (
+                    <p className="text-red-500 text-xs mt-1">{emailForm.formState.errors.email.message}</p>
+                  )}
                 </div>
-              </div>
 
-              {/* Password Field */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-[#ffe0b3]">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#ffcc99] h-4 w-4" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className="w-full pl-10 pr-12 py-3 bg-[#0f0f0f] border border-[#333] rounded-lg text-white placeholder-gray-400 focus:border-[#ffcc99] focus:outline-none transition-colors"
-                    placeholder="Enter your password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#ffcc99] hover:text-[#ffe0b3] transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-[#ffe0b3]">Password</label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#ffcc99] h-4 w-4" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      {...emailForm.register("password")}
+                      className={`w-full pl-10 pr-12 py-3 bg-[#0f0f0f] border ${emailForm.formState.errors.password ? 'border-red-500' : 'border-[#333]'} rounded-lg text-white placeholder-gray-500 focus:border-[#ffcc99] focus:outline-none transition-colors`}
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#ffcc99] hover:text-[#ffe0b3] transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  {emailForm.formState.errors.password && (
+                    <p className="text-red-500 text-xs mt-1">{emailForm.formState.errors.password.message}</p>
+                  )}
+                  {emailForm.formState.errors.root && (
+                    <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500 text-sm mt-3 flex items-center gap-2">
+                      <Shield className="h-4 w-4 shrink-0" />
+                      {emailForm.formState.errors.root.message}
+                    </div>
+                  )}
                 </div>
-              </div>
 
-              {/* Forgot Password */}
-              <div className="text-right">
-                <Link 
-                  href="/forgot-password" 
-                  className="text-sm text-[#ffcc99] hover:text-[#ffe0b3] transition-colors"
+                <div className="text-right">
+                  <Link href="/forgot-password" className="text-xs text-[#ffcc99] hover:text-[#ffe0b3] transition-colors">
+                    Forgot Password?
+                  </Link>
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-[#ffcc99] text-black hover:bg-[#ffe0b3] font-semibold py-3 transition-all duration-300 shadow-lg"
                 >
-                  Forgot Password?
-                </Link>
-              </div>
+                  {isLoading ? "Authenticating..." : `Sign In as ${role.charAt(0).toUpperCase() + role.slice(1)}`}
+                </Button>
+              </form>
+            ) : (
+              <form onSubmit={otpForm.handleSubmit(onOtpSubmit)} className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-[#ffe0b3]">Phone Number</label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#ffcc99] h-4 w-4" />
+                    <span className="absolute left-9 top-1/2 transform -translate-y-1/2 text-[#888] text-sm">+91</span>
+                    <input
+                      {...otpForm.register("phone")}
+                      disabled={otpSent}
+                      maxLength={10}
+                      className={`w-full pl-16 pr-4 py-3 bg-[#0f0f0f] border ${otpForm.formState.errors.phone ? 'border-red-500' : 'border-[#333]'} rounded-lg text-white placeholder-gray-500 focus:border-[#ffcc99] focus:outline-none transition-colors disabled:opacity-50`}
+                      placeholder="9876543210"
+                    />
+                  </div>
+                  {otpForm.formState.errors.phone && (
+                    <p className="text-red-500 text-xs mt-1">{otpForm.formState.errors.phone.message}</p>
+                  )}
+                </div>
 
-              {/* Login Button */}
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-[#ffcc99] text-black hover:bg-[#ffe0b3] font-semibold py-3 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-              >
-                {isLoading ? "Signing In..." : `Login as ${loginType === "client" ? "Client" : "Advocate"}`}
-              </Button>
-            </form>
+                {otpSent && (
+                  <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                    <label className="text-sm font-medium text-[#ffe0b3]">Enter OTP</label>
+                    <div className="relative">
+                      <KeyRound className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#ffcc99] h-4 w-4" />
+                      <input
+                        {...otpForm.register("otp")}
+                        maxLength={6}
+                        className={`w-full pl-10 pr-4 py-3 bg-[#0f0f0f] border ${otpForm.formState.errors.otp ? 'border-red-500' : 'border-[#333]'} rounded-lg text-white placeholder-gray-500 focus:border-[#ffcc99] focus:outline-none transition-colors tracking-widest`}
+                        placeholder="123456"
+                      />
+                    </div>
+                    {otpForm.formState.errors.otp && (
+                      <p className="text-red-500 text-xs mt-1">{otpForm.formState.errors.otp.message}</p>
+                    )}
+                  </div>
+                )}
 
-            {/* Divider */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-[#333]"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-[#1a1a1a] text-[#ffe0b3]">or continue with</span>
-              </div>
-            </div>
-
-            {/* Google Login */}
-            <Button
-              type="button"
-              onClick={handleGoogleLogin}
-              disabled={isLoading}
-              variant="outline"
-              className="w-full border-[#ffcc99] text-[#ffcc99] hover:bg-[#ffcc99] hover:text-black font-semibold py-3 transition-all duration-300"
-            >
-              <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
-                <path
-                  fill="currentColor"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                />
-              </svg>
-              Continue with Google
-            </Button>
+                {!otpSent ? (
+                  <Button
+                    type="button"
+                    onClick={onSendOtp}
+                    disabled={isLoading}
+                    className="w-full bg-[#ffcc99] text-black hover:bg-[#ffe0b3] font-semibold py-3 transition-all duration-300 shadow-lg"
+                  >
+                    {isLoading ? "Sending OTP..." : "Get OTP"}
+                  </Button>
+                ) : (
+                  <div className="space-y-3">
+                    <Button
+                      type="submit"
+                      disabled={isLoading}
+                      className="w-full bg-[#ffcc99] text-black hover:bg-[#ffe0b3] font-semibold py-3 transition-all duration-300 shadow-lg"
+                    >
+                      {isLoading ? "Verifying..." : "Verify & Login"}
+                    </Button>
+                    <button
+                      type="button"
+                      onClick={() => setOtpSent(false)}
+                      className="w-full text-xs text-[#888] hover:text-[#ffcc99] transition-colors"
+                    >
+                      Wrong number? Change
+                    </button>
+                  </div>
+                )}
+              </form>
+            )}
 
             {/* Sign Up Link */}
-            <div className="text-center">
-              <p className="text-[#ffe0b3]">
+            <div className="pt-4 border-t border-[#333] text-center">
+              <p className="text-[#ffe0b3] text-sm">
                 Don't have an account?{" "}
-                <Link 
-                  href={loginType === "advocate" ? "/lawyer-dashboard" : "/register"}
+                <Link
+                  href={role === "advocate" ? "/register?role=advocate" : "/register"}
                   className="text-[#ffcc99] hover:text-[#ffe0b3] font-semibold transition-colors"
                 >
-                  {loginType === "advocate" ? "Register as Advocate" : "Sign Up"}
+                  Submit Registration Request
                 </Link>
               </p>
             </div>
@@ -253,15 +329,11 @@ export default function LoginPage() {
 
         {/* Footer */}
         <div className="text-center mt-8">
-          <p className="text-[#ffe0b3] text-sm">
+          <p className="text-[#ffe0b3] text-xs">
             By logging in, you agree to our{" "}
-            <Link href="/terms" className="text-[#ffcc99] hover:underline">
-              Terms of Service
-            </Link>{" "}
+            <Link href="/terms" className="text-[#ffcc99] hover:underline">Terms of Service</Link>{" "}
             and{" "}
-            <Link href="/privacy" className="text-[#ffcc99] hover:underline">
-              Privacy Policy
-            </Link>
+            <Link href="/privacy" className="text-[#ffcc99] hover:underline">Privacy Policy</Link>
           </p>
         </div>
       </div>

@@ -1,0 +1,17 @@
+
+> nyaysetu-platform@0.1.0 lint
+> next lint
+
+
+./app/(dashboard)/lawyer-dashboard/ai-tools/fir-analyzer/page.tsx
+121:38  Error: 'Bot' is not defined.  react/jsx-no-undef
+129:42  Error: 'Bot' is not defined.  react/jsx-no-undef
+
+./app/(dashboard)/lawyer-dashboard/ai-tools/limitation-tracker/page.tsx
+179:46  Error: 'BookOpen' is not defined.  react/jsx-no-undef
+
+./lib/mongodb.ts
+17:1  Warning: Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any').
+21:5  Warning: Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any').
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
