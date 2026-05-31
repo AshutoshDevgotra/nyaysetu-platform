@@ -13,7 +13,9 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
-    console.log(`Forwarding query to: ${backendUrl}ask`);
+    const targetUrl = backendUrl.endsWith("/") ? `${backendUrl}ask` : `${backendUrl}/ask`;
+
+    console.log(`Forwarding query to: ${targetUrl}`);
 
     const maxRetries = 3;
     let attempt = 0;
@@ -21,7 +23,7 @@ export const POST = async (req: NextRequest) => {
     while (attempt < maxRetries) {
       attempt++;
       try {
-        const apiRes = await fetch(`${backendUrl}ask`, {
+        const apiRes = await fetch(targetUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
